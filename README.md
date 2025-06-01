@@ -12,6 +12,7 @@ make clean; make qemu
 
 Generating patch (from inside xv6-riscv directory):
 git add --all; git diff HEAD > <patch file name>
+
 e.g.: git add --all; git diff HEAD > ../test.patch
 
 Applying patch:
