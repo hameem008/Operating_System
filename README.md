@@ -3,6 +3,7 @@ Assignments of the course Oprating System.
 
 xv6: Resources
 [Prerequisite tools](https://pdos.csail.mit.edu/6.828/2022/tools.html)
+
 Cloning codebase:
 git clone https://github.com/shuaibw/xv6-riscv --depth=1
 
@@ -19,4 +20,5 @@ e.g.: git apply --whitespace=fix ../test.patch
 
 Cleanup git directory:
 git clean -fdx; git reset --hard
+
 [Explanation of source code](https://www.youtube.com/watch?v=fWUJKH0RNFE&list=PLbtzT1TYeoMhTPzyTZboW_j7TPAnjv9XB)
