@@ -1,0 +1,106 @@
+xv6-riscv installation
+1) Perquisites
+$ sudo apt-get install git build-essential gdb-multiarch qemu-system-misc gcc-riscv64-linux-gnu binutils-riscv64-linux-gnu
+2) git clone https://github.com/shuaibw/xv6-riscv --depth=1
+3) make clean; make qemu
+
+making patch file
+git add --all
+git diff HEAD > 2005055.patch
+
+applying patch file
+git apply 2005055.patch
+
+1) user.h in user
+including pstat.h
+int settickets(int);
+int getpinfo(struct pstat *);
+adding two system call
+
+2) usys.pl in user
+entry("settickets");
+entry("getpinfo");
+# adding two entry for two system call
+
+3) syscall.h in kernel
+#define SYS_settickets 22
+#define SYS_getpinfo 23
+/*
+    adding amcro for sys call
+*/
+
+4) sysproc.c in kernel
+including pstat.h
+/*
+  adding two sys call sys_settickets and sys_getpinfo
+*/
+
+5) syscall.c in kernel
+/*
+  adding function for two system call
+  extern uint64 sys_settickets(void);
+  extern uint64 sys_getpinfo(void);
+*/
+/*
+  [SYS_settickets] sys_settickets,
+  [SYS_getpinfo] sys_getpinfo,
+*/
+
+6) param.h in kernel
+/*
+    adding some necessary macro
+    #define TIME_LIMIT_0 2
+    #define TIME_LIMIT_1 4
+    #define WAIT_THRESH 6
+    #define DEFAULT_TICKETS 10
+*/
+
+7) proc.h in kernel
+/*
+  adding the field for getting necessary info
+*/
+int inQ;
+int waiting_time;
+int running_time;
+int times_scheduled;
+int tickets_original;
+int tickets_current;
+uint queue_ticks[2];
+
+8) Makefile
+CPU:= 1
+
+9) pstsat.h created in kernel
+pstat struct
+
+10) proc.c in kernel 
+print_log variable
+adding in allocproc() func
+/*
+  initalizing the fields
+*/
+p->inQ = 0;
+p->waiting_time = 0;
+p->running_time = 0;
+p->times_scheduled = 0;
+p->tickets_original = DEFAULT_TICKETS;
+p->tickets_current = DEFAULT_TICKETS;
+p->queue_ticks[0] = 0;
+p->queue_ticks[1] = 0;
+adding in fork() func
+/*
+  geting the tickets from parrents 
+*/
+np->tickets_original = p->tickets_original;
+np->tickets_current = p->tickets_original;
+adding a function
+/*
+  random number generator
+*/
+Lottery scheduling and Round Robin implementation 
+
+11) testprocinfo.c created in user
+printing the details of process table in a moment
+
+12) settickets.c created in user
+setting tickets for the current running process

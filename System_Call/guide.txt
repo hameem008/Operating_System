@@ -1,0 +1,115 @@
+1) user.h in user 
+/*
+    Added 4 function.
+    int trace(int); -> takes an integer, the sys call number which it need to trace
+    int info(struct procinfo *); -> this function gets some system information
+    int setlastcmds(char *); -> stores a recently used command in kernel space
+    int getlastcmds(char *, int); -> gets which past command is needed
+*/
+
+2) usys.pl in user
+# 4 entries are added here
+# entry("trace");
+# entry("info");
+# entry("getlastcmds");
+# entry("setlastcmds");
+
+3) syscall.h in kernel 
+/*
+    4 sys call macro are added here
+    #define SYS_trace 22
+    #define SYS_info 23
+    #define SYS_setlastcmds 24
+    #define SYS_getlastcmds 25
+*/
+
+4) sysproc.c in kernel
+/*
+  uint64 sys_trace() assigns the call no which need to be traced in p->trace_id 
+*/
+/*
+  uint64 sys_info() gets some system information
+  activeprocess and memsize is calculated by iterating through the all process array
+*/
+/*
+  storing the last commands
+  void adjust_lastcmds() adjust the recent commands 
+*/
+/*
+  uint64 sys_setlastcmds() recieve the last used command and stores it in the array
+  spinlock locks the kernel so that more than one thread can't write the array at the same time
+*/
+/*
+  uint64 sys_getlastcmds() write the last command asking by user in the buffer
+  if it is out of limit than provides a empty command
+*/
+
+5) syscall.c in kernel
+/*
+  4 funtions are added 
+  extern uint64 sys_trace(void);
+  extern uint64 sys_info(void);
+  extern uint64 sys_setlastcmds(void);
+  extern uint64 sys_getlastcmds(void);
+*/
+/*
+  4 mapped value are added here
+  [SYS_trace] sys_trace,
+  [SYS_info] sys_info,
+  [SYS_setlastcmds] sys_setlastcmds,
+  [SYS_getlastcmds] sys_getlastcmds,
+*/
+/*
+  void trace_call(struct proc *p, int sys_call_no) prints the details of a system call which need to be traced
+*/
+/*
+  void return_val(struct proc *p, int sys_call_no) prints the return value of each system call
+*/
+/*
+  checking if this system call needs to be traced
+*/
+/*
+  runs the system call
+  for the system call which needs to be traced void trace_call(struct proc *p, int sys_call_no) has this line
+*/
+
+6) proc.h in kernel
+struct proc
+/*
+  the system call no which needs to be traced
+*/
+
+7) proc.c in kernel
+static struct proc * allocproc(void)
+/*
+  reseting the value of p->trace_id so that next commands are not be traced
+*/
+
+8) sh.c in user
+/*
+  int get_cmd_num(char *ch) takes a bang bang command and returns the index of a recently used command
+  return 0 means that the bang bang command is not valid or this is a regular command
+*/
+/*
+  writes the last command
+*/
+/*
+  gets the desired command
+*/
+/*
+  writes the last command
+*/
+
+9) load.c in user
+external programme for getting some system information through info system call
+
+10) trace.c in user
+external programme for calling the trace system call
+
+11) Makefile in xv6-riscv
+# two lines are added
+# $U/_trace\
+# $U/_load\
+
+12) file.c in kernel
+how to use spinlock
